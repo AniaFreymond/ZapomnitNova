@@ -9,7 +9,15 @@ async function throwIfResNotOk(res: Response) {
 
 export function authHeaders(): HeadersInit {
   const token = localStorage.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  const userId = localStorage.getItem("userId");
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  if (userId) {
+    headers["X-Replit-User-Id"] = userId;
+  }
+  return headers;
 }
 
 export async function apiRequest(
