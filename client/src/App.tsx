@@ -9,6 +9,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Suspense, useEffect, useState } from "react";
 
+function decodeUserId(token: string): string | null {
+  try {
+    const payload = JSON.parse(
+      atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    return payload.sub || payload.user_id || payload.userId || null;
+  } catch {
+    return null;
+  }
+}
+
 function Router() {
   return (
     <Switch>
@@ -25,6 +36,10 @@ function App() {
   useEffect(() => {
     const existing = localStorage.getItem("authToken");
     if (existing) {
+      const id = decodeUserId(existing);
+      if (id) {
+        localStorage.setItem("userId", id);
+      }
       queryClient.setDefaultOptions({
         queries: { retry: false, refetchOnWindowFocus: false },
       });
@@ -38,6 +53,10 @@ function App() {
       const token = await (window as any).auth?.("flashcards-app");
       if (token) {
         localStorage.setItem("authToken", token);
+        const id = decodeUserId(token);
+        if (id) {
+          localStorage.setItem("userId", id);
+        }
         queryClient.setDefaultOptions({
           queries: { retry: false, refetchOnWindowFocus: false },
         });
