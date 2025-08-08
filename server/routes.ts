@@ -6,20 +6,37 @@ import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const apiPrefix = '/api';
-  
+
   // Auth middleware
-  app.use(`${apiPrefix}/*`, (req: any, res, next) => {
+  app.use(`${apiPrefix}/*`, async (req: any, res, next) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res.status(401).json({ error: 'No authorization header' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Not authenticated' });
     }
+
     const token = authHeader.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ error: 'No token provided' });
+
+    try {
+      const response = await fetch('https://replit.com/api/v0/userinfo', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+
+      const data = await response.json();
+
+      if (!data || !data.id) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+
+      req.user = { id: data.id };
+      next();
+    } catch (err) {
+      console.error('Token validation failed:', err);
+      return res.status(401).json({ error: 'Not authenticated' });
     }
-    // Repl Auth adds user data to the request
-    req.user = { id: req.headers['x-replit-user-id'] };
-    next();
   });
 
   // Get all flashcards for the authenticated user
