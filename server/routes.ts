@@ -9,33 +9,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Auth middleware
   app.use(`${apiPrefix}/*`, async (req: any, res, next) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Not authenticated' });
+    const replitUserId = req.headers["x-replit-user-id"];
+    if (!replitUserId) {
+      return res.status(401).json({ error: "Not authenticated" });
     }
 
-    const token = authHeader.split(' ')[1];
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const token = authHeader.split(" ")[1];
 
     try {
-      const response = await fetch('https://replit.com/api/v0/userinfo', {
+      const response = await fetch("https://replit.com/api/v0/userinfo", {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       if (!response.ok) {
-        return res.status(401).json({ error: 'Not authenticated' });
+        return res.status(401).json({ error: "Not authenticated" });
       }
 
       const data = await response.json();
 
       if (!data || !data.id) {
-        return res.status(401).json({ error: 'Not authenticated' });
+        return res.status(401).json({ error: "Not authenticated" });
       }
 
-      req.user = { id: data.id };
+      req.user = { id: replitUserId };
       next();
     } catch (err) {
-      console.error('Token validation failed:', err);
-      return res.status(401).json({ error: 'Not authenticated' });
+      console.error("Token validation failed:", err);
+      return res.status(401).json({ error: "Not authenticated" });
     }
   });
 
