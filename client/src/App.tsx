@@ -40,9 +40,6 @@ function App() {
       if (id) {
         localStorage.setItem("userId", id);
       }
-      queryClient.setDefaultOptions({
-        queries: { retry: false, refetchOnWindowFocus: false },
-      });
       setReady(true);
       return;
     }
@@ -57,9 +54,6 @@ function App() {
         if (id) {
           localStorage.setItem("userId", id);
         }
-        queryClient.setDefaultOptions({
-          queries: { retry: false, refetchOnWindowFocus: false },
-        });
         setReady(true);
       }
     };
