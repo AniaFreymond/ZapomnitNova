@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon, InfoIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import ParticleTitle from "./ParticleTitle";
+import { logout } from "@/lib/queryClient";
 
 export default function Navbar() {
   const [location] = useLocation();
@@ -51,23 +52,30 @@ export default function Navbar() {
 
         <nav className="flex items-center gap-6">
           <Link href="/" className={`text-sm font-medium transition-all duration-300 hover:scale-105 ${
-              location === "/" 
-                ? "text-primary border-b-2 border-primary pb-1" 
+              location === "/"
+                ? "text-primary border-b-2 border-primary pb-1"
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:dark:text-primary"
             }`}>
               Home
           </Link>
           <Link href="/about" className={`text-sm font-medium transition-all duration-300 hover:scale-105 ${
-              location === "/about" 
-                ? "text-primary border-b-2 border-primary pb-1" 
+              location === "/about"
+                ? "text-primary border-b-2 border-primary pb-1"
                 : "text-gray-600 dark:text-gray-300 hover:text-primary hover:dark:text-primary"
             }`}>
               About
           </Link>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={toggleDarkMode} 
+          <Button
+            variant="outline"
+            onClick={logout}
+            className="text-sm"
+          >
+            Log out
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleDarkMode}
             aria-label="Toggle dark mode"
             className="rounded-full w-10 h-10 border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300"
           >
