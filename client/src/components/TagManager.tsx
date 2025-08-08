@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import TagForm from "./TagForm";
 import { Card } from "@/components/ui/card";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, authHeaders } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 
 export default function TagManager() {
@@ -23,7 +23,7 @@ export default function TagManager() {
     const fetchTags = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/tags");
+        const response = await fetch("/api/tags", { headers: authHeaders() });
         if (!response.ok) {
           throw new Error("Failed to fetch tags");
         }
@@ -166,7 +166,7 @@ export default function TagManager() {
           queryClient.invalidateQueries({ queryKey: ["/api/tags"] });
           const fetchTags = async () => {
             try {
-              const response = await fetch("/api/tags");
+              const response = await fetch("/api/tags", { headers: authHeaders() });
               if (!response.ok) {
                 throw new Error("Failed to fetch tags");
               }

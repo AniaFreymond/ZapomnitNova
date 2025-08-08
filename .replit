@@ -1,6 +1,9 @@
 modules = ["nodejs-20", "web"]
 run = "npm run dev"
 
+[auth]
+required = true
+
 [nix]
 channel = "stable-24_05"
 

@@ -7,7 +7,7 @@ import Home from "@/pages/home";
 import About from "@/pages/about";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 function Router() {
   return (
@@ -20,29 +20,36 @@ function Router() {
 }
 
 function App() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = "https://auth.util.repl.co/script.js";
-    script.setAttribute('data-client-id', 'flashcards-app');
-    script.setAttribute('authed', `
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        location.reload();
-      }
-    `);
-    document.body.appendChild(script);
+  const [ready, setReady] = useState(false);
 
-    // Add auth token to all API requests
-    const token = localStorage.getItem('authToken');
-    if (token) {
+  useEffect(() => {
+    const existing = localStorage.getItem("authToken");
+    if (existing) {
       queryClient.setDefaultOptions({
-        queries: {
-          retry: false,
-          refetchOnWindowFocus: false,
-        }
+        queries: { retry: false, refetchOnWindowFocus: false },
       });
+      setReady(true);
+      return;
     }
+
+    const script = document.createElement("script");
+    script.src = "https://auth.util.repl.co/script.js";
+    script.onload = async () => {
+      const token = await (window as any).auth?.("flashcards-app");
+      if (token) {
+        localStorage.setItem("authToken", token);
+        queryClient.setDefaultOptions({
+          queries: { retry: false, refetchOnWindowFocus: false },
+        });
+        setReady(true);
+      }
+    };
+    document.body.appendChild(script);
   }, []);
+
+  if (!ready) {
+    return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
