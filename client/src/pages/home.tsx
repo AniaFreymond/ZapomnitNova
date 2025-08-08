@@ -39,7 +39,10 @@ export default function Home() {
         ? selectedTagIds.map(id => `tags=${id}`).join('&') 
         : '';
       const queryParams = `q=${encodeURIComponent(searchQuery)}${tagParams ? `&${tagParams}` : ''}`;
-      const response = await fetch(`/api/flashcards/search?${queryParams}`, { headers: authHeaders() });
+      const response = await fetch(`/api/flashcards/search?${queryParams}`, {
+        headers: authHeaders(),
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error('Failed to search flashcards');
       }

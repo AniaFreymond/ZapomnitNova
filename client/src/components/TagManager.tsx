@@ -23,7 +23,10 @@ export default function TagManager() {
     const fetchTags = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/tags", { headers: authHeaders() });
+        const response = await fetch("/api/tags", {
+          headers: authHeaders(),
+          credentials: "include",
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch tags");
         }
@@ -166,7 +169,10 @@ export default function TagManager() {
           queryClient.invalidateQueries({ queryKey: ["/api/tags"] });
           const fetchTags = async () => {
             try {
-              const response = await fetch("/api/tags", { headers: authHeaders() });
+              const response = await fetch("/api/tags", {
+                headers: authHeaders(),
+                credentials: "include",
+              });
               if (!response.ok) {
                 throw new Error("Failed to fetch tags");
               }

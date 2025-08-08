@@ -21,7 +21,10 @@ export default function TagFilter({ onTagsChange }: TagFilterProps) {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch("/api/tags", { headers: authHeaders() });
+        const response = await fetch("/api/tags", {
+          headers: authHeaders(),
+          credentials: "include",
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch tags");
         }

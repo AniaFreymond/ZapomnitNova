@@ -25,9 +25,6 @@ function App() {
   useEffect(() => {
     const existing = localStorage.getItem("authToken");
     if (existing) {
-      queryClient.setDefaultOptions({
-        queries: { retry: false, refetchOnWindowFocus: false },
-      });
       setReady(true);
       return;
     }
@@ -38,9 +35,6 @@ function App() {
       const token = await (window as any).auth?.("flashcards-app");
       if (token) {
         localStorage.setItem("authToken", token);
-        queryClient.setDefaultOptions({
-          queries: { retry: false, refetchOnWindowFocus: false },
-        });
         setReady(true);
       }
     };
