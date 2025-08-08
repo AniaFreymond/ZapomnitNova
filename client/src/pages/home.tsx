@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FlashcardWithTags } from "@shared/schema";
 import { useMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
+import { authHeaders } from "@/lib/queryClient";
 
 export default function Home() {
   const [isCardFormOpen, setIsCardFormOpen] = useState(false);
@@ -38,7 +39,7 @@ export default function Home() {
         ? selectedTagIds.map(id => `tags=${id}`).join('&') 
         : '';
       const queryParams = `q=${encodeURIComponent(searchQuery)}${tagParams ? `&${tagParams}` : ''}`;
-      const response = await fetch(`/api/flashcards/search?${queryParams}`);
+      const response = await fetch(`/api/flashcards/search?${queryParams}`, { headers: authHeaders() });
       if (!response.ok) {
         throw new Error('Failed to search flashcards');
       }

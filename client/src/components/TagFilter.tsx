@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Tag } from "@shared/schema";
+import { authHeaders } from "@/lib/queryClient";
 
 type TagFilterProps = {
   onTagsChange: (selectedTagIds: number[]) => void;
@@ -20,7 +21,7 @@ export default function TagFilter({ onTagsChange }: TagFilterProps) {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch("/api/tags");
+        const response = await fetch("/api/tags", { headers: authHeaders() });
         if (!response.ok) {
           throw new Error("Failed to fetch tags");
         }
