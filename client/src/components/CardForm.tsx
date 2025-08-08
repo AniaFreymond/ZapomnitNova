@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, authHeaders } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { KaTeXComponent } from "@/lib/katex";
 import { Tag } from "@shared/schema";
@@ -74,7 +74,7 @@ export default function CardForm({ isOpen, onClose, editCard }: CardFormProps) {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch("/api/tags");
+        const response = await fetch("/api/tags", { headers: authHeaders() });
         if (!response.ok) {
           throw new Error("Failed to fetch tags");
         }
