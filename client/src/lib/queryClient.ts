@@ -1,5 +1,11 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+export function logout() {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userId");
+  window.location.reload();
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -35,6 +41,11 @@ export async function apiRequest(
     credentials: "include",
   });
 
+  if (res.status === 401) {
+    logout();
+    throw new Error("401: Unauthorized");
+  }
+
   await throwIfResNotOk(res);
   return res;
 }
@@ -50,8 +61,12 @@ export const getQueryFn: <T>(options: {
       headers: authHeaders(),
     });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+    if (res.status === 401) {
+      logout();
+      if (unauthorizedBehavior === "returnNull") {
+        return null;
+      }
+      throw new Error("401: Unauthorized");
     }
 
     await throwIfResNotOk(res);
